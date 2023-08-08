@@ -14,6 +14,7 @@ import {
   IRegister,
   IVerifyOTP,
 } from 'src/interfaces/auth.interface';
+import { Prisma } from '@prisma/client';
 
 @Controller('/')
 export class AuthController {
@@ -43,13 +44,24 @@ export class AuthController {
 
   /**
    *
+   * @param body
+   * @returns {}
+   */
+
+  @Post('/enable-otp')
+  EnableOTP(@Body('id') id: string) {
+    return this.twoFactorService.EnableOTP(id);
+  }
+
+  /**
+   *
    * @param Id
    * @returns {IGenOTP}
    */
 
   @Post('/gen-otp')
-  GenOTP(@Body() Id: GenOTPDto) {
-    return this.twoFactorService.GenOTP(Id);
+  GenOTP(@Body('id') id: string) {
+    return this.twoFactorService.GenOTP(id);
   }
 
   /**

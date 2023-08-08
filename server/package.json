@@ -29,8 +29,13 @@
     "@nestjs/mapped-types": "*",
     "@nestjs/platform-express": "^9.0.0",
     "@prisma/client": "^5.1.1",
+    "base32-encode": "^2.0.0",
+    "bcryptjs": "^2.4.3",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.0",
+    "hi-base32": "^0.5.1",
+    "jsonwebtoken": "^9.0.1",
+    "otpauth": "^9.1.4",
     "prisma": "^5.1.1",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.2.0"

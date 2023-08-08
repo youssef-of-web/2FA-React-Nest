@@ -8,7 +8,7 @@ export class RegisterDto {
   email: string;
 
   @IsNotEmpty()
-  password: number;
+  password: string;
 }
 
 export class LoginDto {
@@ -19,6 +19,10 @@ export class LoginDto {
   password: number;
 }
 
+export class EnableOTPDto {
+  @IsNotEmpty()
+  id: string;
+}
 export class GenOTPDto {
   @IsNotEmpty()
   id: string;
