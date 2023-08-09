@@ -103,7 +103,7 @@ function TwoFactorAuth() {
                   <FormLabel>Enter the 6-digit verification code:</FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="shadcn"
+                      placeholder="******"
                       type="text"
                       id="verificationCode"
                       className="w-full p-2 rounded border border-gray-400 focus:outline-none focus:ring focus:border-blue-500"
