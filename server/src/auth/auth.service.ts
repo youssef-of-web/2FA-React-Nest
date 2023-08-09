@@ -68,7 +68,8 @@ export class AuthService {
       id: existUser.id,
       email: existUser.email,
       fullname: existUser.fullname,
-      opt_enabled: existUser.otp_enabled,
+      otp_enabled: existUser.otp_enabled,
+      otp_verified: existUser.otp_verified,
     };
 
     return payload;
@@ -84,16 +85,20 @@ export class AuthService {
       throw new HttpException('NOT FOUND USER', HttpStatus.NOT_FOUND);
     }
 
-    await this.prisma.user.update({
+    const newUser = await this.prisma.user.update({
       where: {
         id: id,
       },
       data: {
+        otp_verified: true,
         otp_enabled: true,
       },
     });
 
-    return { message: 'OTP enabled' };
+    return {
+      otp_enabled: newUser.otp_enabled,
+      otp_verified: newUser.otp_verified,
+    };
   }
 
   async GenOTP(id: string): Promise<IGenOTP> {
@@ -169,10 +174,7 @@ export class AuthService {
       },
     });
     return {
-      id: newUser.id,
-      email: newUser.email,
-      fullname: newUser.fullname,
-      opt_enabled: newUser.otp_enabled,
+      otp_verified: newUser.otp_verified,
     };
   }
 
@@ -187,34 +189,40 @@ export class AuthService {
       throw new HttpException('NOT FOUND USER', HttpStatus.NOT_FOUND);
     }
 
-    const totp = new OTPAuth.TOTP({
-      issuer: 'TENSORCODE',
-      label: 'TensorCodeTwoFactorAuth',
-      algorithm: 'SHA1',
-      digits: 6,
-      period: 30,
-      secret: existUser.otp_secret,
-    });
-
-    const delta = totp.validate({ token: body.token });
-
-    if (delta === null) {
-      throw new HttpException('INVALID TOKEN', HttpStatus.BAD_REQUEST);
-    }
     const newUser = await this.prisma.user.update({
       where: {
         id: body.id,
       },
       data: {
         otp_enabled: false,
-        otp_verified: true,
       },
     });
     return {
-      id: newUser.id,
-      email: newUser.email,
-      fullname: newUser.fullname,
-      opt_enabled: newUser.otp_enabled,
+      otp_enabled: newUser.otp_enabled,
+    };
+  }
+
+  async Logout(id: string) {
+    const existUser = await this.prisma.user.findFirst({
+      where: {
+        id: id,
+      },
+    });
+
+    if (!existUser) {
+      throw new HttpException('NOT FOUND USER', HttpStatus.NOT_FOUND);
+    }
+
+    const newUser = await this.prisma.user.update({
+      where: {
+        id: id,
+      },
+      data: {
+        otp_verified: false,
+      },
+    });
+    return {
+      otp_verified: newUser.otp_verified,
     };
   }
 }

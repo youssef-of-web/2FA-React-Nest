@@ -38,7 +38,4 @@ export class VerifyOTPDto {
 export class DisableOTPDto {
   @IsNotEmpty()
   id: string;
-
-  @IsNotEmpty()
-  token: string;
 }

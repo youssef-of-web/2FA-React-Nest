@@ -1,12 +1,10 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import {
   DisableOTPDto,
-  GenOTPDto,
   LoginDto,
   RegisterDto,
   VerifyOTPDto,
 } from 'src/dto/auth.dto';
-import { AuthService } from './auth.service';
 import {
   IDisabledOTP,
   IGenOTP,
@@ -14,7 +12,7 @@ import {
   IRegister,
   IVerifyOTP,
 } from 'src/interfaces/auth.interface';
-import { Prisma } from '@prisma/client';
+import { AuthService } from './auth.service';
 
 @Controller('/')
 export class AuthController {
@@ -84,5 +82,16 @@ export class AuthController {
   @Post('/disable-otp')
   DisableOTP(@Body() body: DisableOTPDto) {
     return this.twoFactorService.DisableOTP(body);
+  }
+
+  /**
+   *
+   * @param body
+   * @returns
+   */
+
+  @Post('/logout')
+  LogOut(@Body('id') id: string) {
+    return this.twoFactorService.Logout(id);
   }
 }
