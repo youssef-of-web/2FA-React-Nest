@@ -1,17 +1,11 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, HttpCode, Post } from '@nestjs/common';
 import {
   DisableOTPDto,
   LoginDto,
   RegisterDto,
+  ValidateOTPDto,
   VerifyOTPDto,
 } from 'src/dto/auth.dto';
-import {
-  IDisabledOTP,
-  IGenOTP,
-  ILogin,
-  IRegister,
-  IVerifyOTP,
-} from 'src/interfaces/auth.interface';
 import { AuthService } from './auth.service';
 
 @Controller('/')
@@ -42,17 +36,6 @@ export class AuthController {
 
   /**
    *
-   * @param body
-   * @returns {}
-   */
-
-  @Post('/enable-otp')
-  EnableOTP(@Body('id') id: string) {
-    return this.twoFactorService.EnableOTP(id);
-  }
-
-  /**
-   *
    * @param Id
    * @returns {IGenOTP}
    */
@@ -67,7 +50,7 @@ export class AuthController {
    * @param body
    * @returns {IVerifyOTP}
    */
-
+  @HttpCode(200)
   @Post('/verify-otp')
   VerifyOTP(@Body() body: VerifyOTPDto) {
     return this.twoFactorService.VerifyOTP(body);
@@ -76,9 +59,20 @@ export class AuthController {
   /**
    *
    * @param body
+   * @returns {IVerifyOTP}
+   */
+  @HttpCode(200)
+  @Post('/validate-otp')
+  ValidateOTP(@Body() body: ValidateOTPDto) {
+    return this.twoFactorService.ValidateOTP(body);
+  }
+
+  /**
+   *
+   * @param body
    * @returns {IDisabledOTP}
    */
-
+  @HttpCode(200)
   @Post('/disable-otp')
   DisableOTP(@Body() body: DisableOTPDto) {
     return this.twoFactorService.DisableOTP(body);
@@ -89,7 +83,7 @@ export class AuthController {
    * @param body
    * @returns
    */
-
+  @HttpCode(200)
   @Post('/logout')
   LogOut(@Body('id') id: string) {
     return this.twoFactorService.Logout(id);

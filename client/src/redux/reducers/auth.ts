@@ -5,14 +5,14 @@ interface ILogin {
   fullname: string;
   email: string;
   otp_enabled: boolean;
-  otp_verified: boolean;
+  otp_validated: boolean;
 }
 const initialState: ILogin = {
   id: "",
   fullname: "",
   email: "",
   otp_enabled: false,
-  otp_verified: false,
+  otp_validated: false,
 };
 
 export const AuthSlice = createSlice({
@@ -26,21 +26,14 @@ export const AuthSlice = createSlice({
         state.email = action.payload.email;
         state.fullname = action.payload.fullname;
         state.otp_enabled = action.payload.otp_enabled;
-        state.otp_verified = action.payload.otp_verified;
+        state.otp_validated = action.payload.otp_validated;
       })
-      .addCase("auth/logout/fulfilled", (state, action: any) => {
-        state.id = "";
-        state.email = "";
-        state.fullname = "";
-        state.otp_verified = false;
-        state.otp_verified = false;
-      })
+
       .addCase("auth/verify-otp/fulfilled", (state, action: any) => {
-        state.otp_verified = action.payload.otp_verified;
-      })
-      .addCase("auth/enable-otp/fulfilled", (state, action: any) => {
-        state.otp_verified = action.payload.otp_verified;
         state.otp_enabled = action.payload.otp_enabled;
+      })
+      .addCase("auth/validate-otp/fulfilled", (state, action: any) => {
+        state.otp_validated = action.payload.otp_validated;
       })
       .addCase("auth/disable-otp/fulfilled", (state, action: any) => {
         state.otp_enabled = action.payload.otp_enabled;

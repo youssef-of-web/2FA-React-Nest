@@ -1,19 +1,18 @@
-import { FC } from "react";
+import { FC, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../hook";
 import { Button } from "../components/ui/button";
 import { withAuth } from "../hoc/withAuth";
-import { DisableOTPAction, EnableOTPAction } from "../redux/actions/auth";
+import { DisableOTPAction } from "../redux/actions/auth";
+import TwoFactorDialog from "../components/TwoFactorDialog";
 
 interface ProfileProps {}
 
 const Profile: FC<ProfileProps> = () => {
   const { fullname, otp_enabled, id } = useAppSelector(state => state.auth);
+  const [open, setOpen] = useState<boolean>(false);
   const dispatch = useAppDispatch();
   const Enable2FA = (id: string) => {
-    dispatch(EnableOTPAction({ id }))
-      .unwrap()
-      .then(() => alert("OTP enabled"))
-      .catch(err => alert(err));
+    console.log(id);
   };
 
   const DisableRFA = (id: string) => {
@@ -28,8 +27,10 @@ const Profile: FC<ProfileProps> = () => {
       {otp_enabled ? (
         <Button onClick={() => DisableRFA(id)}>Disable 2FA</Button>
       ) : (
-        <Button onClick={() => Enable2FA(id)}>Enable 2FA</Button>
+        <Button onClick={() => setOpen(true)}>Enable 2FA</Button>
       )}
+
+      <TwoFactorDialog open={open} setOpen={setOpen} />
     </div>
   );
 };

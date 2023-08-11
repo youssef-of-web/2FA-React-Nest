@@ -19,6 +19,6 @@ model User {
   otp_secret  String?
   otp_authurl String?
 
-  otp_enabled  Boolean @default(false)
-  otp_verified Boolean @default(false)
+  otp_enabled   Boolean @default(false)
+  otp_validated Boolean @default(false)
 }

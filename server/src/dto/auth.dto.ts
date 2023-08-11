@@ -18,11 +18,6 @@ export class LoginDto {
   @IsNotEmpty()
   password: number;
 }
-
-export class EnableOTPDto {
-  @IsNotEmpty()
-  id: string;
-}
 export class GenOTPDto {
   @IsNotEmpty()
   id: string;
@@ -35,6 +30,15 @@ export class VerifyOTPDto {
   @IsNotEmpty()
   token: string;
 }
+
+export class ValidateOTPDto {
+  @IsNotEmpty()
+  id: string;
+
+  @IsNotEmpty()
+  token: string;
+}
+
 export class DisableOTPDto {
   @IsNotEmpty()
   id: string;

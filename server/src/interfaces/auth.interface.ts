@@ -7,7 +7,7 @@ export interface ILogin {
   fullname: string;
   email: string;
   otp_enabled: boolean;
-  otp_verified: boolean;
+  otp_validated: boolean;
 }
 
 export interface IGenOTP {
@@ -16,9 +16,14 @@ export interface IGenOTP {
 }
 
 export interface IVerifyOTP {
-  otp_verified: boolean;
+  otp_enabled: boolean;
+}
+
+export interface IValidateOTP {
+  otp_validated: boolean;
 }
 
 export interface IDisabledOTP {
   otp_enabled: boolean;
+  otp_validated: boolean;
 }

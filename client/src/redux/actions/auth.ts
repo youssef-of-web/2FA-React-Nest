@@ -68,12 +68,13 @@ export const VerifyOTPAction = createAsyncThunk(
   }
 );
 
-export const EnableOTPAction = createAsyncThunk(
-  "auth/enable-otp",
-  async ({ id }: { id: string }, { rejectWithValue }) => {
+export const ValidateOTPAction = createAsyncThunk(
+  "auth/validate-otp",
+  async ({ id, token }: { id: string; token: string }, { rejectWithValue }) => {
     try {
-      const result = await API.POST("/api/enable-otp", {
+      const result = await API.POST("/api/validate-otp", {
         id: id,
+        token: token,
       });
       return result.data;
     } catch (error: any) {

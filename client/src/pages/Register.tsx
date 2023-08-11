@@ -15,11 +15,13 @@ import { useAppDispatch } from "../hook";
 import { RegisterSchema, RegisterValues } from "../lib/validation";
 import { RegisterAction } from "../redux/actions/auth";
 import { useNavigate } from "react-router-dom";
+import { useToast } from "../components/ui/use-toast";
 
 interface RegisterProps {}
 
 const Register: FC<RegisterProps> = () => {
   const navigation = useNavigate();
+  const { toast } = useToast();
   const form = useForm<RegisterValues>({
     resolver: zodResolver(RegisterSchema),
     defaultValues: {},
@@ -32,7 +34,11 @@ const Register: FC<RegisterProps> = () => {
         navigation("/login");
       })
       .catch(err => {
-        alert(err);
+        toast({
+          title: "Login failed.",
+          description: err,
+          variant: "destructive",
+        });
       });
   };
   return (

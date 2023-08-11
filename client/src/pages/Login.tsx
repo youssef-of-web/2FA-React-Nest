@@ -15,10 +15,12 @@ import { LoginSchema, LoginValues } from "../lib/validation";
 import { useAppDispatch } from "../hook";
 import { LoginAction } from "../redux/actions/auth";
 import { Link, useNavigate } from "react-router-dom";
+import { useToast } from "../components/ui/use-toast";
 
 interface LoginProps {}
 
 const Login: FC<LoginProps> = () => {
+  const { toast } = useToast();
   const navigation = useNavigate();
   const form = useForm<LoginValues>({
     resolver: zodResolver(LoginSchema),
@@ -33,7 +35,11 @@ const Login: FC<LoginProps> = () => {
         navigation("/profile");
       })
       .catch(err => {
-        alert(err);
+        toast({
+          title: "Login failed.",
+          description: err,
+          variant: "destructive",
+        });
       });
   };
   return (

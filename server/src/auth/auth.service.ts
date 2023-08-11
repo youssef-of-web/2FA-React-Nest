@@ -6,6 +6,7 @@ import {
   DisableOTPDto,
   LoginDto,
   RegisterDto,
+  ValidateOTPDto,
   VerifyOTPDto,
 } from 'src/dto/auth.dto';
 import {
@@ -13,6 +14,7 @@ import {
   IGenOTP,
   ILogin,
   IRegister,
+  IValidateOTP,
   IVerifyOTP,
 } from 'src/interfaces/auth.interface';
 import { generateSecretRandomBase32 } from '../lib/gen-base-32';
@@ -69,36 +71,10 @@ export class AuthService {
       email: existUser.email,
       fullname: existUser.fullname,
       otp_enabled: existUser.otp_enabled,
-      otp_verified: existUser.otp_verified,
+      otp_validated: existUser.otp_validated,
     };
 
     return payload;
-  }
-
-  async EnableOTP(id: string) {
-    const existUser = await this.prisma.user.findFirst({
-      where: {
-        id: id,
-      },
-    });
-    if (!existUser) {
-      throw new HttpException('NOT FOUND USER', HttpStatus.NOT_FOUND);
-    }
-
-    const newUser = await this.prisma.user.update({
-      where: {
-        id: id,
-      },
-      data: {
-        otp_verified: true,
-        otp_enabled: true,
-      },
-    });
-
-    return {
-      otp_enabled: newUser.otp_enabled,
-      otp_verified: newUser.otp_verified,
-    };
   }
 
   async GenOTP(id: string): Promise<IGenOTP> {
@@ -170,11 +146,49 @@ export class AuthService {
       },
       data: {
         otp_enabled: true,
-        otp_verified: true,
       },
     });
     return {
-      otp_verified: newUser.otp_verified,
+      otp_enabled: newUser.otp_enabled,
+    };
+  }
+
+  async ValidateOTP(body: ValidateOTPDto): Promise<IValidateOTP> {
+    const existUser = await this.prisma.user.findFirst({
+      where: {
+        id: body.id,
+      },
+    });
+
+    if (!existUser) {
+      throw new HttpException('NOT FOUND USER', HttpStatus.NOT_FOUND);
+    }
+
+    const totp = new OTPAuth.TOTP({
+      issuer: 'TENSORCODE',
+      label: 'TensorCodeTwoFactorAuth',
+      algorithm: 'SHA1',
+      digits: 6,
+      period: 30,
+      secret: existUser.otp_secret,
+    });
+
+    const delta = totp.validate({ token: body.token });
+
+    if (delta === null) {
+      throw new HttpException('INVALID TOKEN', HttpStatus.BAD_REQUEST);
+    }
+
+    const newUser = await this.prisma.user.update({
+      where: {
+        id: body.id,
+      },
+      data: {
+        otp_validated: true,
+      },
+    });
+    return {
+      otp_validated: newUser.otp_validated,
     };
   }
 
@@ -195,10 +209,12 @@ export class AuthService {
       },
       data: {
         otp_enabled: false,
+        otp_validated: false,
       },
     });
     return {
       otp_enabled: newUser.otp_enabled,
+      otp_validated: newUser.otp_validated,
     };
   }
 
@@ -218,11 +234,11 @@ export class AuthService {
         id: id,
       },
       data: {
-        otp_verified: false,
+        otp_validated: false,
       },
     });
     return {
-      otp_verified: newUser.otp_verified,
+      otp_validated: newUser.otp_validated,
     };
   }
 }
