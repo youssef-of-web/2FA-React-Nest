@@ -7,6 +7,7 @@ import Layout from "./Layout";
 const Home = React.lazy(() => import("../pages/Home"));
 
 import { withLoading } from "../hoc/withLoading";
+import TwoFactorAuth from "../pages/TwoFactorAuth";
 
 const HomePage = withLoading(Home);
 const LoginPage = withLoading(Login);
@@ -33,6 +34,10 @@ export const Routers = createBrowserRouter([
       {
         path: "/profile",
         element: <ProfilePage />,
+      },
+      {
+        path: "/two-factor-validation",
+        element: <TwoFactorAuth />,
       },
     ],
   },

@@ -13,17 +13,43 @@ import { QRCodeCanvas } from "qrcode.react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { GenOTPSchema, GenOTPValues } from "../lib/validation";
+import { useAppDispatch, useAppSelector } from "../hook";
+import { VerifyOTPAction } from "../redux/actions/auth";
+import { useToast } from "./ui/use-toast";
 
-interface TwoFactorAuthProps {}
+interface TwoFactorAuthProps {
+  urlOTP: string;
+  setOpen: (value: boolean) => void;
+}
 
-const TwoFactorAuth: FC<TwoFactorAuthProps> = ({}) => {
+const TwoFactorAuth: FC<TwoFactorAuthProps> = ({ urlOTP, setOpen }) => {
+  const { id } = useAppSelector(state => state.auth);
+  const dispatch = useAppDispatch();
+  const { toast } = useToast();
   const form = useForm<GenOTPValues>({
     resolver: zodResolver(GenOTPSchema),
-    defaultValues: {},
+    defaultValues: {
+      id: id,
+    },
   });
 
-  const VerifyOtpCode = (values: Omit<GenOTPValues, "token">) => {
-    console.log(values);
+  const VerifyOtpCode = (values: GenOTPValues) => {
+    dispatch(VerifyOTPAction({ id: values.id, token: values.token }))
+      .unwrap()
+      .then(res => {
+        setOpen(false);
+        toast({
+          title: "2FA enabled",
+          variant: "default",
+        });
+      })
+      .catch(err => {
+        toast({
+          title: "Failed Request",
+          description: err,
+          variant: "destructive",
+        });
+      });
   };
   return (
     <div>
@@ -68,7 +94,7 @@ const TwoFactorAuth: FC<TwoFactorAuthProps> = ({}) => {
                 </li>
               </ol>
             </div>
-            <QRCodeCanvas value={""} />
+            <QRCodeCanvas value={urlOTP} />
           </div>
 
           <Form {...form}>
